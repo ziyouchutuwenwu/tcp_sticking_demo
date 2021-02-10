@@ -16,11 +16,11 @@ func setDataLenthToHeader(buffer []byte, length int, pkgHeaderOption *header.Pkg
 }
 
 func MakeDataToSend(data []byte, pkgHeaderOption *header.PkgHeaderOption) []byte{
-	length := len(data)
+	dataLength := len(data)
 
-	if ( length > pkgHeaderOption.MaxDataSize) { return nil}
-	buffer := make([]byte, pkgHeaderOption.HeaderFrameLenth + len(data) )
-	setDataLenthToHeader(buffer, length, pkgHeaderOption)
+	if ( dataLength > pkgHeaderOption.MaxDataSize) { return nil}
+	buffer := make([]byte, pkgHeaderOption.HeaderFrameLenth + dataLength )
+	setDataLenthToHeader(buffer, dataLength, pkgHeaderOption)
 
 	copy(buffer[pkgHeaderOption.HeaderFrameLenth:], data)
 	fmt.Println(buffer)

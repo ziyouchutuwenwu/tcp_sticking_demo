@@ -11,6 +11,7 @@ var savedData []byte
 
 func init(){
 	savedData = make([]byte, 0)
+	savedData = []byte{0,6}
 }
 
 func LoopRead(connection net.Conn)  {
@@ -28,9 +29,6 @@ func LoopRead(connection net.Conn)  {
 		fmt.Println(buffer)
 
 		totalData := append(savedData, buffer...)
-		if readLen >= readBufferSize{
-			savedData = append(savedData, buffer...)
-		}
 
 		pkgHeaderOption := header.GetPkgOptionWithHeaderSize(2)
 		DealWithData(totalData, pkgHeaderOption)
@@ -40,12 +38,18 @@ func LoopRead(connection net.Conn)  {
 func DealWithData(totalData []byte, pkgHeaderOption *header.PkgHeaderOption)  {
 	for{
 		totalDataLen := len(totalData)
-		if ( totalDataLen < pkgHeaderOption.HeaderSize) { break };
+		if ( totalDataLen <= pkgHeaderOption.HeaderSize) {
+			savedData = totalData[:len(totalData):len(totalData)]
+			break
+		};
 
 		if ( totalDataLen > pkgHeaderOption.HeaderSize ){
 			dataLen := GetDataLenthFromHeader(totalData, pkgHeaderOption)
 
-			if ( totalDataLen < pkgHeaderOption.HeaderSize + dataLen) {break}
+			if ( totalDataLen < pkgHeaderOption.HeaderSize + dataLen) {
+				savedData = totalData[:len(totalData):len(totalData)]
+				break
+			}
 			if ( totalDataLen >= pkgHeaderOption.HeaderSize + dataLen) {
 
 				frameLen := pkgHeaderOption.HeaderSize + dataLen
