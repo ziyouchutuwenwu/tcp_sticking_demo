@@ -15,12 +15,13 @@ func SendDemo() {
 }
 
 func ReadDemo(){
+	pkgHeaderOption := header.GetPkgOptionWithHeaderSize(2)
 	conn, err := net.Dial("tcp", ":9999")
 	if err != nil {
 		fmt.Printf("dial failed, err:%v\n", err)
 		return
 	}
-	recv.LoopRead(conn)
+	recv.LoopRead(conn, pkgHeaderOption)
 }
 
 func main() {

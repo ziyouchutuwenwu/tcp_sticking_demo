@@ -14,7 +14,7 @@ func init(){
 	savedData = []byte{0,6}
 }
 
-func LoopRead(connection net.Conn)  {
+func LoopRead(connection net.Conn, pkgHeaderOption *header.PkgHeaderOption)  {
 	readBufferSize := 8
 	for{
 		readBuffer := make([]byte, readBufferSize)
@@ -29,8 +29,6 @@ func LoopRead(connection net.Conn)  {
 		fmt.Println(buffer)
 
 		totalData := append(savedData, buffer...)
-
-		pkgHeaderOption := header.GetPkgOptionWithHeaderSize(2)
 		DealWithData(totalData, pkgHeaderOption)
 	}
 }
@@ -59,6 +57,8 @@ func DealWithData(totalData []byte, pkgHeaderOption *header.PkgHeaderOption)  {
 
 				lastPosition := len(totalData)
 				capacity := len(totalData)
+
+				// 去掉一个数据帧的数据
 				totalData = totalData[frameLen : lastPosition : capacity]
 				savedData = totalData[:]
 			}
